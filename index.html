@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Localflix — Your Local Media, Beautifully Organized</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0f1117;
+    --bg2:     #161b27;
+    --bg3:     #1c2333;
+    --border:  rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text:    #eef0f5;
+    --muted:   #7a8099;
+    --accent:  #e5191b;
+    --accent2: #ff3033;
+    --tag-bg:  rgba(229,25,27,0.12);
+    --tag-text:#ff4547;
+    --red-bar: #e5191b;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(14px);
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .logo span { color: var(--accent); }
+
+  .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 400;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--text); }
+
+  /* red bottom bar like the app */
+  nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red-bar);
+    opacity: 0.7;
+  }
+
+  /* hero */
+  .hero {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 7rem 2rem 5rem;
+    text-align: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.9rem;
+    border-radius: 2rem;
+    border: 1px solid rgba(229,25,27,0.3);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+    text-transform: uppercase;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .cta-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.9rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.875rem;
+    padding: 0.9rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    border: 1px solid var(--border2);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+
+  .sys-req {
+    margin-top: 1.2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  /* mockup */
+  .mockup-wrap {
+    max-width: 940px;
+    margin: 3rem auto 6rem;
+    padding: 0 2rem;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .mockup {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+  }
+
+  .mockup-topbar {
+    background: var(--bg3);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 2px solid var(--accent);
+    height: 52px;
+  }
+
+  .mock-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .mock-logo-icon {
+    background: var(--accent);
+    border-radius: 4px;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  .mock-search {
+    flex: 1;
+    max-width: 280px;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 50px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    padding: 0 0.8rem;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .mock-tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+
+  .mock-tab {
+    padding: 0.25rem 0.9rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--border);
+  }
+
+  .mock-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* hero banner */
+  .mock-hero-banner {
+    height: 200px;
+    background: linear-gradient(to right, var(--bg) 30%, transparent),
+                linear-gradient(to top, var(--bg) 10%, transparent),
+                #1a2035;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 1.5rem;
+    overflow: hidden;
+  }
+
+  .mock-hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(229,25,27,0.08) 0%, transparent 60%),
+      linear-gradient(135deg, #1a2035 0%, #0f1525 100%);
+  }
+
+  .mock-hero-content { position: relative; z-index: 1; }
+
+  .mock-series-badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-bottom: 0.4rem;
+    display: inline-block;
+  }
+
+  .mock-hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .mock-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #fff;
+    color: #111;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    margin-top: 0.6rem;
+  }
+
+  /* cards section */
+  .mock-cards-section {
+    background: var(--bg2);
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mock-row { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .mock-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .mock-cards {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.6rem;
+  }
+
+  .mock-card {
+    background: var(--bg3);
+    border-radius: 0.4rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .mock-thumb {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+  }
+
+  .mock-card-info { padding: 0.35rem 0.45rem 0.45rem; }
+
+  .mock-card-title {
+    font-size: 0.58rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mock-card-ep {
+    font-size: 0.52rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .mock-badge {
+    display: inline-block;
+    font-size: 0.45rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 1px 4px;
+    border-radius: 2px;
+    margin-top: 2px;
+  }
+
+  .mock-badge.movie { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .mock-badge.series { background: rgba(229,25,27,0.15); color: #ff4547; }
+
+  .mock-prog {
+    height: 2px;
+    background: var(--border);
+    margin-top: 0.3rem;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .mock-prog-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+
+  /* features */
+  section.features {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: rgba(229,25,27,0.4); transform: translateY(-2px); }
+
+  .feature-icon { font-size: 1.4rem; margin-bottom: 0.9rem; }
+
+  .feature-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .feature-card p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* how */
+  section.how {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .step { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: rgba(229,25,27,0.2);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .step h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .step p { font-size: 0.875rem; color: var(--muted); font-weight: 300; }
+
+  /* download CTA */
+  section.download {
+    max-width: 960px;
+    margin: 2rem auto 6rem;
+    padding: 0 2rem;
+  }
+
+  .download-box {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 1rem;
+    border-top: 3px solid var(--accent);
+    padding: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .download-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .download-box p { font-size: 0.9rem; color: var(--muted); font-weight: 300; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer p { font-size: 0.8rem; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+  footer a:hover { color: var(--text); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .dl-icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .gh-icon { width: 16px; height: 16px; fill: currentColor; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-icon">🍿</div>
+    Local<span>flix</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="https://github.com/kabakadev/localflix" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">🪟 Windows · Free · No internet required</div>
+  <h1>Your local media,<br><em>beautifully</em> organized.</h1>
+  <p>Localflix scans your hard drive and turns your movie and anime collection into a Netflix-style experience — right on your PC.</p>
+  <div class="cta-row">
+    <a href="https://github.com/kabakadev/localflix-releases/releases/latest/download/Localflix.exe" class="btn-primary">
+      <svg class="dl-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download for Windows
+    </a>
+    <a href="https://github.com/kabakadev/localflix" target="_blank" class="btn-secondary">
+      <svg class="gh-icon" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      View source
+    </a>
+  </div>
+  <p class="sys-req">Windows 10 / 11 · 64-bit · No Python or Node.js needed</p>
+</section>
+
+<div class="mockup-wrap">
+  <div class="mockup">
+    <div class="mockup-topbar">
+      <div class="mock-logo">
+        <div class="mock-logo-icon">🍿</div>
+        Localflix
+      </div>
+      <div class="mock-search">🔍 Search titles...</div>
+      <div class="mock-tabs">
+        <div class="mock-tab active">All</div>
+        <div class="mock-tab">Movies</div>
+        <div class="mock-tab">Shows</div>
+      </div>
+    </div>
+    <div class="mock-hero-banner">
+      <div class="mock-hero-bg"></div>
+      <div class="mock-hero-content">
+        <div class="mock-series-badge">Series</div>
+        <div class="mock-hero-title">Classroom of<br>the Elite</div>
+        <div class="mock-play-btn">▶ Play Now</div>
+      </div>
+    </div>
+    <div class="mock-cards-section">
+
+      <!-- Continue Watching -->
+      <div class="mock-row">
+        <div class="mock-section-label">▶ Continue Watching</div>
+        <div class="mock-cards">
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a1208">🎬</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Invincible</div>
+              <div class="mock-card-ep">S02 E08</div>
+              <div class="mock-prog"><div class="mock-prog-fill" style="width:65%"></div></div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1020">🕵️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">The Blacklist</div>
+              <div class="mock-card-ep">S05 E12</div>
+              <div class="mock-prog"><div class="mock-prog-fill" style="width:42%"></div></div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1a12">☢️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Chernobyl</div>
+              <div class="mock-card-ep">S01 E03</div>
+              <div class="mock-prog"><div class="mock-prog-fill" style="width:78%"></div></div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a0d0d">🔥</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Attack on Titan</div>
+              <div class="mock-card-ep">S04 E28</div>
+              <div class="mock-prog"><div class="mock-prog-fill" style="width:30%"></div></div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a1208">⚖️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Nuremberg</div>
+              <div class="mock-card-ep">MOVIE</div>
+              <div class="mock-prog"><div class="mock-prog-fill" style="width:55%"></div></div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1525">👁️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Person of Interest</div>
+              <div class="mock-card-ep">S03 E17</div>
+              <div class="mock-prog"><div class="mock-prog-fill" style="width:20%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Movies -->
+      <div class="mock-row">
+        <div class="mock-section-label">Movies</div>
+        <div class="mock-cards">
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a1208">⚖️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Nuremberg</div>
+              <div class="mock-badge movie">MOVIE</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1a0d">🌿</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Hotel Rwanda</div>
+              <div class="mock-badge movie">MOVIE</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a0d1a">🕷️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Schindler's List</div>
+              <div class="mock-badge movie">MOVIE</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d0d1a">🌌</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Interstellar</div>
+              <div class="mock-badge movie">MOVIE</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a1508">🥊</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Gladiator</div>
+              <div class="mock-badge movie">MOVIE</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1a1a">🤖</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Ex Machina</div>
+              <div class="mock-badge movie">MOVIE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shows -->
+      <div class="mock-row">
+        <div class="mock-section-label">Shows</div>
+        <div class="mock-cards">
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1020">🕵️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">The Blacklist</div>
+              <div class="mock-badge series">SERIES</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1525">👁️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Person of Interest</div>
+              <div class="mock-badge series">SERIES</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d1a12">☢️</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Chernobyl</div>
+              <div class="mock-badge series">SERIES</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a0808">🧪</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Breaking Bad</div>
+              <div class="mock-badge series">SERIES</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#1a1208">🎬</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Invincible</div>
+              <div class="mock-badge series">SERIES</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-thumb" style="background:#0d0d1a">🌌</div>
+            <div class="mock-card-info">
+              <div class="mock-card-title">Classroom Elite</div>
+              <div class="mock-badge series">SERIES</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<section class="features" id="features">
+  <p class="section-label">Features</p>
+  <h2 class="section-title">Everything your<br>media deserves.</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Auto-scan & organize</h3>
+      <p>Point it at a folder and Localflix automatically finds, names, and organizes your movies and shows — no manual tagging.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>Poster art & metadata</h3>
+      <p>Fetches artwork, descriptions, and episode info from AniList and TMDB so your library looks as good as it feels.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">▶️</div>
+      <h3>Opens in your player</h3>
+      <p>Plays files in VLC, MPV, or whatever you have installed. No codec wars, no re-encoding, just press play.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>Watch progress tracking</h3>
+      <p>Keeps track of where you left off across episodes and movies. Your Continue Watching row is always up to date.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <h3>Works fully offline</h3>
+      <p>No account, no subscription, no cloud. Your files stay on your machine. Internet only needed for fetching posters.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Single .exe, no install</h3>
+      <p>Download one file, double-click, done. No Python, no Node.js, no dependencies. It just works.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">Up and running<br>in seconds.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Download the .exe</h3>
+      <p>One file. No installer wizard, no admin rights required.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Point to your folder</h3>
+      <p>Tell Localflix where your movies and shows live on your hard drive.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Enjoy your library</h3>
+      <p>Browse, search, and watch. Your entire collection, beautifully presented.</p>
+    </div>
+  </div>
+</section>
+
+<section class="download">
+  <div class="download-box">
+    <div>
+      <h2>Ready to watch?</h2>
+      <p>Built for movie lovers.</p>
+    </div>
+    <a href="https://github.com/kabakadev/localflix-releases/releases/latest/download/Localflix.exe" class="btn-primary" style="white-space:nowrap; flex-shrink:0;">
+      <svg class="dl-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Localflix.exe
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Localflix</p>
+  <div style="display:flex; gap:1.5rem;">
+    <a href="https://github.com/kabakadev/localflix" target="_blank">GitHub</a>
+    <a href="https://github.com/kabakadev/localflix/issues" target="_blank">Report a bug</a>
+  </div>
+</footer>
+
+</body>
+</html>
